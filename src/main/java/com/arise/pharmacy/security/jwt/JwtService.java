@@ -47,11 +47,13 @@ public class JwtService {
         return getClaims(token).getSubject();
     }
 
-    public Date getExpiration(String token){
+    private Date getExpiration(String token){
         return getClaims(token).getExpiration();
     }
 
-    public boolean isValidToken(String sub, String token){
-        return sub.equals(getSubject(token)) && getExpiration(token).after(new Date());
+    private String getIssuer(String token) { return getClaims(token).getIssuer(); }
+
+    public boolean isValidToken(String token){
+        return getIssuer(token).equals("arise") && getExpiration(token).after(new Date());
     }
 }

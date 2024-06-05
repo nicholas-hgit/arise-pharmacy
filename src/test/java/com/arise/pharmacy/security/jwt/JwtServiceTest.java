@@ -52,31 +52,33 @@ class JwtServiceTest {
         //GIVEN
         String token = Jwts.builder()
                 .subject("user@gmail.com")
+                .issuer("arise")
                 .issuedAt(new Date())
                 .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(3)))
                 .signWith(underTest.getSigningKey())
                 .compact();
 
         //WHEN
-        boolean isValid = underTest.isValidToken("user@gmail.com",token);
+        boolean isValid = underTest.isValidToken(token);
 
         //THEN
         assertThat(isValid).isTrue();
     }
 
     @Test
-    void isValidTokenWithInvalidSubject(){
+    void isValidTokenWithInvalidIssuer(){
 
         //GIVEN
         String token = Jwts.builder()
                 .subject("user@gmail.com")
+                .issuer("issuer")
                 .issuedAt(new Date())
                 .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(3)))
                 .signWith(underTest.getSigningKey())
                 .compact();
 
         //WHEN
-        boolean isValid = underTest.isValidToken("use@gmail.com",token);
+        boolean isValid = underTest.isValidToken(token);
 
         //THEN
         assertThat(isValid).isFalse();
