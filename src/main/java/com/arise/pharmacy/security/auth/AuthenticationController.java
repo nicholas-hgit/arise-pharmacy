@@ -19,7 +19,7 @@ public class AuthenticationController {
     public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request){
         String jws = authenticationService.authenticate(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .header("Authentication", jws)
+                .header("Authentication", "Bearer %s".formatted(jws))
                 .build();
     }
 
