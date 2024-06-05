@@ -8,23 +8,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class RegistrationServiceImplTest {
 
-    @Mock
-    UserRepository userRepository;
-    @Mock
-    RegistrationRequest request;
+    @Mock UserRepository userRepository;
+    @Mock RegistrationRequest request;
+    @Mock PasswordEncoder encoder;
     RegistrationService underTest;
 
     @BeforeEach
     void setUp(){
-        underTest = new RegistrationServiceImpl(userRepository);
+        underTest = new RegistrationServiceImpl(userRepository,encoder);
     }
 
     @Test
@@ -39,6 +40,7 @@ class RegistrationServiceImplTest {
 
         given(request.email()).willReturn(user.getUsername());
         given(request.password()).willReturn(user.getPassword());
+        given(encoder.encode(any())).willReturn(user.getPassword());
 
         //WHEN
         underTest.register(request);
