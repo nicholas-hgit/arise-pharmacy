@@ -54,6 +54,7 @@ public class JwtService {
     private String getIssuer(String token) { return getClaims(token).getIssuer(); }
 
     public boolean isValidToken(String token){
-        return getIssuer(token).equals("arise") && getExpiration(token).after(new Date());
+        return getIssuer(token).equals("arise") && getExpiration(token).after(new Date())
+                && getSubject(token) != null;
     }
 }

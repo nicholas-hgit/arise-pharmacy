@@ -84,4 +84,22 @@ class JwtServiceTest {
         assertThat(isValid).isFalse();
     }
 
+    @Test
+    void isValidTokenWithNoSubject(){
+
+        //GIVEN
+        String token = Jwts.builder()
+                .issuer("arise")
+                .issuedAt(new Date())
+                .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(3)))
+                .signWith(underTest.getSigningKey())
+                .compact();
+
+        //WHEN
+        boolean isValid = underTest.isValidToken(token);
+
+        //THEN
+        assertThat(isValid).isFalse();
+    }
+
 }
