@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
+import static com.arise.pharmacy.security.roles.Role.STAFF;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
@@ -34,6 +35,7 @@ class UserDetailsServiceImplTest {
 
         User user = User.builder()
                 .email(mail)
+                .role(STAFF)
                 .password("password")
                 .enabled(true)
                 .build();

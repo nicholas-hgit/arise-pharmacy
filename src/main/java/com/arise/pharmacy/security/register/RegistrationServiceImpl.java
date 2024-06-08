@@ -1,5 +1,9 @@
 package com.arise.pharmacy.security.register;
 
+import static com.arise.pharmacy.security.roles.Role.STAFF;
+import static com.arise.pharmacy.security.roles.Role.SHOPPER;
+
+import com.arise.pharmacy.security.roles.Role;
 import com.arise.pharmacy.security.user.User;
 import com.arise.pharmacy.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +20,12 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void register(RegistrationRequest request) {
 
+        Role role = request.role().equalsIgnoreCase("staff")? STAFF : SHOPPER;
+
         User user = User.builder()
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
+                .role(role)
                 .enabled(true)
                 .build();
 

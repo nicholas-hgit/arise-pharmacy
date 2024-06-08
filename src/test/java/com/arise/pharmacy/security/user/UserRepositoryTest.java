@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
+import static com.arise.pharmacy.security.roles.Role.STAFF;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -22,6 +23,7 @@ class UserRepositoryTest {
         User user = User.builder()
                 .email("user@gmail.com")
                 .password("password")
+                .role(STAFF)
                 .enabled(true)
                 .build();
 

@@ -1,13 +1,16 @@
 package com.arise.pharmacy.security.user;
 
+import com.arise.pharmacy.security.roles.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,9 +31,20 @@ public class User implements UserDetails, Principal {
     private String password;
     private boolean enabled;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+
+        var authorities = role.getAuthorities()
+                .stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                .collect(toList());
+
+        authorities.add(new SimpleGrantedAuthority("ROLE_%s".formatted(role.name())));
+
+        return authorities;
     }
 
     @Override
