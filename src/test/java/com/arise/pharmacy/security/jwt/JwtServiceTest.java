@@ -2,8 +2,10 @@ package com.arise.pharmacy.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 
 
 import java.time.LocalDate;
@@ -12,15 +14,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@SpringBootTest
 class JwtServiceTest {
 
+    @Autowired
     JwtService underTest;
-
-    @BeforeEach
-    void setUp(){
-        underTest = new JwtService();
-    }
 
     @Test
     void generateToken() {
