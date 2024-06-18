@@ -33,8 +33,7 @@ class UserRepositoryTest {
         Optional<User> expected = underTest.findByEmail("user@gmail.com");
 
         //THEN
-        assertThat(expected).isNotEmpty()
-                            .containsSame(user);
+        assertThat(expected).contains(user);
 
     }
 
