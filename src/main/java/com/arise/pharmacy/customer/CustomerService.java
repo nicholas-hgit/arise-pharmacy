@@ -1,11 +1,11 @@
 package com.arise.pharmacy.customer;
 
-import java.util.Optional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface CustomerService {
 
-    void saveCustomer(CustomerRequest customer) throws Exception;
-    void updateCustomer(CustomerRequest updatedCustomer) throws Exception;
-    Optional<Customer> findCustomerById(Long id);
-    Optional<Customer> findCustomerByEmail(String email);
+    Customer saveCustomer(CustomerRequest customer) throws UsernameNotFoundException;
+    Customer updateCustomer(CustomerRequest updatedCustomer) throws UsernameNotFoundException;
+    Customer findCustomerById(Long id) throws UsernameNotFoundException ;
+    Customer findCustomerByEmail(String email) throws UsernameNotFoundException;
 }

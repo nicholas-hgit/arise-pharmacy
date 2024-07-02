@@ -2,9 +2,9 @@ package com.arise.pharmacy.customer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -17,46 +17,53 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<?> saveCustomer(@RequestBody CustomerRequest customer){
+
+        Customer savedCustomer;
         try {
-            customerService.saveCustomer(customer);
-        } catch (Exception e) {
+            savedCustomer = customerService.saveCustomer(customer);
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
-        return ResponseEntity.status(CREATED).body(customer);
+
+        return ResponseEntity.status(CREATED).body(savedCustomer);
     }
 
     @GetMapping
     public ResponseEntity<?> getCustomerByEmail(@RequestParam String email){
-        Optional<Customer> customer = customerService.findCustomerByEmail(email);
 
-        if(customer.isEmpty()){
-            return ResponseEntity.status(NOT_FOUND).body("User not found");
+        Customer customer;
+        try {
+            customer = customerService.findCustomerByEmail(email);
+        }catch (UsernameNotFoundException e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
-        return ResponseEntity.status(OK).body(customer.get());
+        return ResponseEntity.status(OK).body(customer);
     }
 
     @GetMapping(path = "{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable Long id){
-        Optional<Customer> customer = customerService.findCustomerById(id);
 
-        if(customer.isEmpty()){
-            return ResponseEntity.status(NOT_FOUND).body("User not found");
+        Customer customer;
+        try {
+            customer = customerService.findCustomerById(id);
+        }catch (UsernameNotFoundException e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
-        return ResponseEntity.status(OK).body(customer.get());
+        return ResponseEntity.status(OK).body(customer);
     }
 
     @PutMapping(path = "update")
     public ResponseEntity<?> updateCustomer(@RequestBody CustomerRequest customer){
 
+        Customer updatedCustomer;
         try {
-            customerService.updateCustomer(customer);
-        } catch (Exception e) {
-            //customer not found
+            updatedCustomer = customerService.updateCustomer(customer);
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
-        return ResponseEntity.status(OK).body(customer);
+        return ResponseEntity.status(OK).body(updatedCustomer);
     }
 }

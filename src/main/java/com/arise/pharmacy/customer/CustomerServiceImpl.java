@@ -16,24 +16,36 @@ public class CustomerServiceImpl implements CustomerService{
     private final UserRepository userRepository;
 
     @Override
-    public Optional<Customer> findCustomerById(Long id) {
-        return customerRepository.findById(id);
+    public Customer findCustomerById(Long id) throws UsernameNotFoundException {
+
+        Optional<Customer> customer = customerRepository.findById(id);
+        if(customer.isEmpty()){
+            throw new UsernameNotFoundException("user not found");
+        }
+
+        return  customer.get();
     }
 
     @Override
-    public Optional<Customer> findCustomerByEmail(String email) {
-        return customerRepository.findByEmail(email);
+    public Customer findCustomerByEmail(String email) throws UsernameNotFoundException {
+
+        Optional<Customer> customer = customerRepository.findByEmail(email);
+        if(customer.isEmpty()){
+            throw new UsernameNotFoundException("user not found");
+        }
+
+        return customer.get();
     }
 
     //customer -> information of user with role of SHOPPER
     //therefore customer.email must exist before saving their information
     @Override
-    public void saveCustomer(CustomerRequest customer) throws UsernameNotFoundException {
+    public Customer saveCustomer(CustomerRequest customer) throws UsernameNotFoundException {
 
         Optional<User> user = userRepository.findByEmail(customer.email());
 
         if(user.isEmpty()){
-            throw new UsernameNotFoundException("Email doesn't exist");
+            throw new UsernameNotFoundException("user account must exist");
         }
 
         Customer customer1 = Customer.builder()
@@ -44,15 +56,17 @@ public class CustomerServiceImpl implements CustomerService{
                 .build();
 
          customerRepository.save(customer1);
+
+         return customer1;
     }
 
     @Override
-    public void updateCustomer(CustomerRequest updatedCustomer) throws UsernameNotFoundException{
+    public Customer updateCustomer(CustomerRequest updatedCustomer) throws UsernameNotFoundException{
 
         Optional<Customer> customerOptional = customerRepository.findByEmail(updatedCustomer.email());
 
         if(customerOptional.isEmpty()){
-            throw new UsernameNotFoundException("Email doesn't exist");
+            throw new UsernameNotFoundException("user not found");
         }
 
         Customer customer = customerOptional.get();
@@ -62,5 +76,7 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setPhoneNumber(updatedCustomer.phone());
 
         customerRepository.save(customer);
+
+        return customer;
     }
 }

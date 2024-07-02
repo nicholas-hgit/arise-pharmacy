@@ -14,8 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -25,7 +24,7 @@ class CustomerServiceImplTest {
     @Mock
     CustomerRepository customerRepository;
     @Mock
-    CustomerRequest customerRequest;
+    CustomerRequest request;
     @Mock
     UserRepository userRepository;
 
@@ -37,51 +36,86 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void findCustomerById() {
+    void findCustomerById(){
 
         //GIVEN
         Long id = 1234L;
+        Customer customer = Customer.builder()
+                .id(id)
+                .firstName("nick")
+                .lastName("cage")
+                .phoneNumber(2767_1312_787L)
+                .build();
+
+        given(customerRepository.findById(id)).willReturn(Optional.of(customer));
 
         //WHEN
-        underTest.findCustomerById(id);
+        Customer expected = underTest.findCustomerById(id);
 
         //THEN
-        ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
-
-        then(customerRepository).should().findById(captor.capture());
-        assertThat(id).isEqualTo(captor.getValue());
+        assertThat(customer).isEqualTo(expected);
     }
 
     @Test
-    void findCustomerByEmail() {
+    void findCustomerByIdThrows(){
+
+        //GIVEN
+        given(customerRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        //WHEN
+        //THEN
+        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.findCustomerById(1L))
+                .withMessage("user not found");
+    }
+
+    @Test
+    void findCustomerByEmail(){
 
         //GIVEN
         String email = "customer@gmail.com";
+        Customer customer = Customer.builder()
+                .id(1L)
+                .firstName("nick")
+                .lastName("cage")
+                .phoneNumber(2767_1312_787L)
+                .build();
+
+        given(customerRepository.findByEmail(email)).willReturn(Optional.of(customer));
 
         //WHEN
-        underTest.findCustomerByEmail(email);
+        Customer expected = underTest.findCustomerByEmail(email);
 
         //THEN
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        assertThat(customer).isEqualTo(expected);
+    }
 
-        then(customerRepository).should().findByEmail(captor.capture());
-        assertThat(email).isEqualTo(captor.getValue());
+    @Test
+    void findCustomerByEmailThrows(){
+
+        //GIVEN
+        String email = "user@gmail.com";
+        given(customerRepository.findByEmail(anyString())).willReturn(Optional.empty());
+
+        //WHEN
+        //THEN
+        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.findCustomerByEmail(email))
+                .withMessage("user not found");
     }
 
     @Test
     void saveCustomer() {
 
         //GIVEN
-        given(customerRequest.email()).willReturn("user@gmail.com");
-        given(customerRequest.firstName()).willReturn("john");
-        given(customerRequest.lastName()).willReturn("doe");
-        given(customerRequest.phone()).willReturn(2786_345_6787L);
+        given(request.email()).willReturn("user@gmail.com");
+        given(request.firstName()).willReturn("john");
+        given(request.lastName()).willReturn("doe");
+        given(request.phone()).willReturn(2786_345_6787L);
 
         User user = User.builder()
-                .email(customerRequest.email())
+                .email(request.email())
                 .build();
 
-        given(userRepository.findByEmail(customerRequest.email())).willReturn(Optional.of(user));
+        given(userRepository.findByEmail(request.email())).willReturn(Optional.of(user));
 
         Customer customer = Customer.builder()
                 .user(user)
@@ -91,41 +125,35 @@ class CustomerServiceImplTest {
                 .build();
         
         //WHEN
-        try {
-            underTest.saveCustomer(customerRequest);
-        } catch (Exception ignored) {
-
-        }
+        underTest.saveCustomer(request);
 
         //THEN
         ArgumentCaptor<Customer> captor = ArgumentCaptor.forClass(Customer.class);
 
         then(customerRepository).should().save(captor.capture());
-        assertThat(customer).isEqualTo(captor.getValue());
+        assertThat(captor.getValue()).hasFieldOrPropertyWithValue("firstName",customer.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName",customer.getLastName())
+                .hasFieldOrPropertyWithValue("phoneNumber",customer.getPhoneNumber())
+                .hasFieldOrPropertyWithValue("user",user);
     }
 
     @Test
     void saveCustomerThrowsException(){
 
         //Given
-        given(customerRequest.email()).willReturn("user@gmail.com");
+        given(request.email()).willReturn("user@gmail.com");
         given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
 
         //WHEN
         //THEN
-        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.saveCustomer(customerRequest))
-                .withMessage("Email doesn't exist");
+        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.saveCustomer(request))
+                .withMessage("user account must exist");
     }
 
     @Test
     void updateCustomer() {
 
         //GIVEN
-        given(customerRequest.email()).willReturn("user@gmail.com");
-        given(customerRequest.firstName()).willReturn("john");
-        given(customerRequest.lastName()).willReturn("doe");
-        given(customerRequest.phone()).willReturn(2786_345_6787L);
-
         Customer customer = Customer.builder()
                 .id(1L)
                 .firstName("nick")
@@ -133,36 +161,44 @@ class CustomerServiceImplTest {
                 .phoneNumber(2786_345_6787L)
                 .build();
 
-        given(customerRepository.findByEmail(customerRequest.email())).willReturn(Optional.of(customer));
+        Customer updatedCustomer = Customer.builder()
+                        .id(1L)
+                        .firstName("john")
+                        .lastName("doe")
+                        .phoneNumber(customer.getPhoneNumber())
+                        .build();
+
+        given(request.email()).willReturn("user@gmail.com");
+        given(request.firstName()).willReturn(updatedCustomer.getFirstName());
+        given(request.lastName()).willReturn(updatedCustomer.getLastName());
+        given(request.phone()).willReturn(updatedCustomer.getPhoneNumber());
+        given(customerRepository.findByEmail(request.email())).willReturn(Optional.of(customer));
 
         //WHEN
-        try {
-            underTest.updateCustomer(customerRequest);
-        } catch (Exception ignored) {
-
-        }
+        underTest.updateCustomer(request);
 
         //THEN
         ArgumentCaptor<Customer> captor = ArgumentCaptor.forClass(Customer.class);
 
         then(customerRepository).should().save(captor.capture());
-        assertThat(captor.getValue()).hasFieldOrPropertyWithValue("id",customer.getId())
-                .hasFieldOrPropertyWithValue("firstName","john")
-                .hasFieldOrPropertyWithValue("lastName","doe")
-                .hasFieldOrPropertyWithValue("phoneNumber",customer.getPhoneNumber());
+        assertThat(captor.getValue()).isEqualTo(customer)
+                .hasFieldOrPropertyWithValue("firstName",updatedCustomer.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName",updatedCustomer.getLastName())
+                .hasFieldOrPropertyWithValue("phoneNumber",updatedCustomer.getPhoneNumber());
+
     }
 
     @Test
     void updateCustomerThrowsException(){
 
         //GIVEN
-        given(customerRequest.email()).willReturn("user@gmail.com");
+        given(request.email()).willReturn("user@gmail.com");
         given(customerRepository.findByEmail(anyString())).willReturn(Optional.empty());
 
         //WHEN
         //THEN
-        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.updateCustomer(customerRequest))
-                .withMessage("Email doesn't exist");
+        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.updateCustomer(request))
+                .withMessage("user not found");
 
     }
 }
