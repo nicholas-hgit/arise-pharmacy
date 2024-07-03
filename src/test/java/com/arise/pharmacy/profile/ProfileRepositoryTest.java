@@ -1,4 +1,4 @@
-package com.arise.pharmacy.customer;
+package com.arise.pharmacy.profile;
 
 import com.arise.pharmacy.security.user.User;
 import com.arise.pharmacy.security.user.UserRepository;
@@ -13,16 +13,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataJpaTest
-class CustomerRepositoryTest {
+class ProfileRepositoryTest {
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
-    CustomerRepository underTest;
+    ProfileRepository underTest;
 
     @Test
-    void findByEmailReturnsCustomerDetails() {
+    void findByEmailReturnsProfileDetails() {
 
         //GIVEN
         User user = User.builder()
@@ -32,7 +32,7 @@ class CustomerRepositoryTest {
                 .password("@john2461")
                 .build();
 
-        Customer customer = Customer.builder()
+        Profile profile = Profile.builder()
                 .user(user)
                 .firstName("john")
                 .lastName("doe")
@@ -40,13 +40,13 @@ class CustomerRepositoryTest {
                 .build();
 
         userRepository.save(user);
-        underTest.save(customer);
+        underTest.save(profile);
 
         //WHEN
-        Optional<Customer> expected = underTest.findByEmail(user.getUsername());
+        Optional<Profile> expected = underTest.findByEmail(user.getUsername());
 
         //THEN
-        assertThat(expected).contains(customer);
+        assertThat(expected).contains(profile);
     }
 
     @Test
@@ -56,7 +56,7 @@ class CustomerRepositoryTest {
         String email = "userdoesntexist@gmail.com";
 
         //WHEN
-        Optional<Customer> expected = underTest.findByEmail(email);
+        Optional<Profile> expected = underTest.findByEmail(email);
 
         //THEN
         assertThat(expected).isEmpty();

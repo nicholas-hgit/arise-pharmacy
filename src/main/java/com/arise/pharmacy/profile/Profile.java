@@ -1,4 +1,4 @@
-package com.arise.pharmacy.customer;
+package com.arise.pharmacy.profile;
 
 import com.arise.pharmacy.security.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,10 +11,10 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "customers")
+@Table(name = "profiles")
 @Builder
 @Entity
-public class Customer {
+public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +31,8 @@ public class Customer {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Customer customer)) return false;
-        return Objects.equals(getId(), customer.getId());
+        if (!(o instanceof Profile profile)) return false;
+        return Objects.equals(getId(), profile.getId());
     }
 
     @Override

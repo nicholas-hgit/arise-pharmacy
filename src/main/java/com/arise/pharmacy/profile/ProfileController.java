@@ -1,4 +1,4 @@
-package com.arise.pharmacy.customer;
+package com.arise.pharmacy.profile;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,59 +11,59 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "api/v1/info/user")
-public class CustomerController {
+public class ProfileController {
 
-    private final CustomerService customerService;
+    private final ProfileService profileService;
 
     @PostMapping
-    public ResponseEntity<?> saveCustomer(@RequestBody CustomerRequest customer){
+    public ResponseEntity<?> saveProfile(@RequestBody ProfileRequest profile){
 
-        Customer savedCustomer;
+        Profile savedProfile;
         try {
-            savedCustomer = customerService.saveCustomer(customer);
+            savedProfile = profileService.saveProfile(profile);
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
-        return ResponseEntity.status(CREATED).body(savedCustomer);
+        return ResponseEntity.status(CREATED).body(savedProfile);
     }
 
     @GetMapping
-    public ResponseEntity<?> getCustomerByEmail(@RequestParam String email){
+    public ResponseEntity<?> getProfileByEmail(@RequestParam String email){
 
-        Customer customer;
+        Profile profile;
         try {
-            customer = customerService.findCustomerByEmail(email);
+            profile = profileService.findProfileByEmail(email);
         }catch (UsernameNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
-        return ResponseEntity.status(OK).body(customer);
+        return ResponseEntity.status(OK).body(profile);
     }
 
     @GetMapping(path = "{id}")
-    public ResponseEntity<?> getCustomerById(@PathVariable Long id){
+    public ResponseEntity<?> getProfileById(@PathVariable Long id){
 
-        Customer customer;
+        Profile profile;
         try {
-            customer = customerService.findCustomerById(id);
+            profile = profileService.findProfileById(id);
         }catch (UsernameNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
-        return ResponseEntity.status(OK).body(customer);
+        return ResponseEntity.status(OK).body(profile);
     }
 
     @PutMapping(path = "update")
-    public ResponseEntity<?> updateCustomer(@RequestBody CustomerRequest customer){
+    public ResponseEntity<?> updateProfile(@RequestBody ProfileRequest profile){
 
-        Customer updatedCustomer;
+        Profile updatedProfile;
         try {
-            updatedCustomer = customerService.updateCustomer(customer);
+            updatedProfile = profileService.updateProfile(profile);
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
-        return ResponseEntity.status(OK).body(updatedCustomer);
+        return ResponseEntity.status(OK).body(updatedProfile);
     }
 }
