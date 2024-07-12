@@ -17,6 +17,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Profile findProfileById(Long id) throws UsernameNotFoundException {
 
         Optional<Profile> profile = profileRepository.findById(id);
@@ -28,6 +29,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @PreAuthorize("authentication.name.equals(#email)")
     public Profile findProfileByEmail(String email) throws UsernameNotFoundException {
 
         Optional<Profile> profile = profileRepository.findByEmail(email);
@@ -40,7 +42,8 @@ public class ProfileServiceImpl implements ProfileService {
 
 
     @Override
-    public com.arise.pharmacy.profile.Profile saveProfile(ProfileRequest profile) throws UsernameNotFoundException {
+    @PreAuthorize("authentication.name.equals(#profile.email())")
+    public Profile saveProfile(ProfileRequest profile) throws UsernameNotFoundException {
 
         Optional<User> user = userRepository.findByEmail(profile.email());
 
@@ -61,6 +64,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @PreAuthorize("authentication.name.equals(#updatedProfile.email())")
     public Profile updateProfile(ProfileRequest updatedProfile) throws UsernameNotFoundException{
 
         Optional<Profile> profileOptional = profileRepository.findByEmail(updatedProfile.email());
