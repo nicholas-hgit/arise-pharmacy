@@ -1,5 +1,7 @@
 package com.arise.pharmacy.profile;
 
+import com.arise.pharmacy.exceptions.InvalidIdentityNumberException;
+import com.arise.pharmacy.exceptions.ProfileNotFoundException;
 import com.arise.pharmacy.security.user.User;
 import com.arise.pharmacy.security.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,9 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 import java.util.Optional;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -42,6 +45,7 @@ class ProfileServiceImplTest {
         Long id = 1234L;
         Profile profile = Profile.builder()
                 .id(id)
+                .identityNumber("4929814787827603")
                 .firstName("nick")
                 .lastName("cage")
                 .phoneNumber(2767_1312_787L)
@@ -64,7 +68,7 @@ class ProfileServiceImplTest {
 
         //WHEN
         //THEN
-        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.findProfileById(1L))
+        assertThatExceptionOfType(ProfileNotFoundException.class).isThrownBy(() -> underTest.findProfileById(1L))
                 .withMessage("user not found");
     }
 
@@ -75,6 +79,7 @@ class ProfileServiceImplTest {
         String email = "profile@gmail.com";
         Profile profile = Profile.builder()
                 .id(1L)
+                .identityNumber("4929814787827603")
                 .firstName("nick")
                 .lastName("cage")
                 .phoneNumber(2767_1312_787L)
@@ -90,24 +95,12 @@ class ProfileServiceImplTest {
     }
 
     @Test
-    void findProfileByEmailThrows(){
-
-        //GIVEN
-        String email = "user@gmail.com";
-        given(profileRepository.findByEmail(anyString())).willReturn(Optional.empty());
-
-        //WHEN
-        //THEN
-        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.findProfileByEmail(email))
-                .withMessage("user not found");
-    }
-
-    @Test
     void saveProfile() {
 
         //GIVEN
         given(request.email()).willReturn("user@gmail.com");
         given(request.firstName()).willReturn("john");
+        given(request.id()).willReturn("4929814787827603");
         given(request.lastName()).willReturn("doe");
         given(request.phone()).willReturn(2786_345_6787L);
 
@@ -119,6 +112,7 @@ class ProfileServiceImplTest {
 
         Profile profile = Profile.builder()
                 .user(user)
+                .identityNumber("4929814787827603")
                 .firstName("john")
                 .lastName("doe")
                 .phoneNumber(2786_345_6787L)
@@ -134,6 +128,7 @@ class ProfileServiceImplTest {
         assertThat(captor.getValue()).hasFieldOrPropertyWithValue("firstName", profile.getFirstName())
                 .hasFieldOrPropertyWithValue("lastName", profile.getLastName())
                 .hasFieldOrPropertyWithValue("phoneNumber", profile.getPhoneNumber())
+                .hasFieldOrPropertyWithValue("identityNumber",profile.getIdentityNumber())
                 .hasFieldOrPropertyWithValue("user",user);
     }
 
@@ -141,13 +136,19 @@ class ProfileServiceImplTest {
     void saveProfileThrowsException(){
 
         //Given
-        given(request.email()).willReturn("user@gmail.com");
-        given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
+        given(request.email()).willReturn("user@email.com");
+        given(request.id()).willReturn("2385764935693");
+
+        User user = User.builder()
+                .email(request.email())
+                .build();
+
+        given(userRepository.findByEmail(request.email())).willReturn(Optional.of(user));
 
         //WHEN
         //THEN
-        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.saveProfile(request))
-                .withMessage("user account must exist");
+        assertThatExceptionOfType(InvalidIdentityNumberException.class).isThrownBy(() -> underTest.saveProfile(request))
+                .withMessage("invalid ID number");
     }
 
     @Test
@@ -156,6 +157,7 @@ class ProfileServiceImplTest {
         //GIVEN
         Profile profile = Profile.builder()
                 .id(1L)
+                .identityNumber("4929814787827603")
                 .firstName("nick")
                 .lastName("cage")
                 .phoneNumber(2786_345_6787L)
@@ -163,6 +165,7 @@ class ProfileServiceImplTest {
 
         Profile updatedProfile = Profile.builder()
                         .id(1L)
+                        .identityNumber("4929814787827603")
                         .firstName("john")
                         .lastName("doe")
                         .phoneNumber(profile.getPhoneNumber())
@@ -188,17 +191,4 @@ class ProfileServiceImplTest {
 
     }
 
-    @Test
-    void updateProfileThrowsException(){
-
-        //GIVEN
-        given(request.email()).willReturn("user@gmail.com");
-        given(profileRepository.findByEmail(anyString())).willReturn(Optional.empty());
-
-        //WHEN
-        //THEN
-        assertThatExceptionOfType(UsernameNotFoundException.class).isThrownBy(() -> underTest.updateProfile(request))
-                .withMessage("user not found");
-
-    }
 }

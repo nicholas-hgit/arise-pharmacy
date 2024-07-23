@@ -12,16 +12,17 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "profiles")
-@Builder
 @Entity
 public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String identityNumber;
     private String firstName;
     private String lastName;
     private Long phoneNumber;
+    private String image;
 
     @OneToOne
     @JoinColumn(name = "email", referencedColumnName = "email")
@@ -38,5 +39,9 @@ public class Profile {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    public static ProfileBuilder builder() {
+        return new ProfileBuilder();
     }
 }

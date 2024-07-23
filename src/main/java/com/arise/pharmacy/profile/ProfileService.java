@@ -1,11 +1,12 @@
 package com.arise.pharmacy.profile;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.arise.pharmacy.exceptions.InvalidIdentityNumberException;
+import com.arise.pharmacy.exceptions.ProfileNotFoundException;
 
 public interface ProfileService {
 
-    Profile saveProfile(ProfileRequest profile) throws UsernameNotFoundException;
-    Profile updateProfile(ProfileRequest updatedProfile) throws UsernameNotFoundException;
-    Profile findProfileById(Long id) throws UsernameNotFoundException ;
-    Profile findProfileByEmail(String email) throws UsernameNotFoundException;
+    Profile saveProfile(ProfileRequest profile) throws InvalidIdentityNumberException;
+    Profile updateProfile(ProfileRequest updatedProfile);
+    Profile findProfileById(Long id) throws ProfileNotFoundException;
+    Profile findProfileByEmail(String email);
 }

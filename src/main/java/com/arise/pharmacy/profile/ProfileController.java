@@ -1,10 +1,10 @@
 package com.arise.pharmacy.profile;
 
+import com.arise.pharmacy.exceptions.InvalidIdentityNumberException;
+import com.arise.pharmacy.exceptions.ProfileNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -21,8 +21,8 @@ public class ProfileController {
         Profile savedProfile;
         try {
             savedProfile = profileService.saveProfile(profile);
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        } catch (InvalidIdentityNumberException e) {
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         }
 
         return ResponseEntity.status(CREATED).body(savedProfile);
@@ -31,13 +31,7 @@ public class ProfileController {
     @GetMapping
     public ResponseEntity<?> getProfileByEmail(@RequestParam String email){
 
-        Profile profile;
-        try {
-            profile = profileService.findProfileByEmail(email);
-        }catch (UsernameNotFoundException e){
-            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
-        }
-
+        Profile profile = profileService.findProfileByEmail(email);
         return ResponseEntity.status(OK).body(profile);
     }
 
@@ -47,7 +41,7 @@ public class ProfileController {
         Profile profile;
         try {
             profile = profileService.findProfileById(id);
-        }catch (UsernameNotFoundException e){
+        }catch (ProfileNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
@@ -57,13 +51,7 @@ public class ProfileController {
     @PutMapping(path = "update")
     public ResponseEntity<?> updateProfile(@RequestBody ProfileRequest profile){
 
-        Profile updatedProfile;
-        try {
-            updatedProfile = profileService.updateProfile(profile);
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
-        }
-
+        Profile updatedProfile = profileService.updateProfile(profile);
         return ResponseEntity.status(OK).body(updatedProfile);
     }
 }
