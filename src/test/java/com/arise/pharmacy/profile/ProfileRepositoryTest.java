@@ -34,7 +34,7 @@ class ProfileRepositoryTest {
 
         Profile profile = Profile.builder()
                 .user(user)
-                .identityNumber("4929814787827603")
+                .identityNumber("1234567890128")
                 .firstName("john")
                 .lastName("doe")
                 .phoneNumber(27_66_256_2346L)

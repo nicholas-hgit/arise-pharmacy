@@ -45,7 +45,7 @@ class ProfileServiceImplTest {
         Long id = 1234L;
         Profile profile = Profile.builder()
                 .id(id)
-                .identityNumber("4929814787827603")
+                .identityNumber("1234567890128")
                 .firstName("nick")
                 .lastName("cage")
                 .phoneNumber(2767_1312_787L)
@@ -79,7 +79,7 @@ class ProfileServiceImplTest {
         String email = "profile@gmail.com";
         Profile profile = Profile.builder()
                 .id(1L)
-                .identityNumber("4929814787827603")
+                .identityNumber("1234567890128")
                 .firstName("nick")
                 .lastName("cage")
                 .phoneNumber(2767_1312_787L)
@@ -100,7 +100,7 @@ class ProfileServiceImplTest {
         //GIVEN
         given(request.email()).willReturn("user@gmail.com");
         given(request.firstName()).willReturn("john");
-        given(request.id()).willReturn("4929814787827603");
+        given(request.id()).willReturn("1234567890128");
         given(request.lastName()).willReturn("doe");
         given(request.phone()).willReturn(2786_345_6787L);
 
@@ -112,7 +112,7 @@ class ProfileServiceImplTest {
 
         Profile profile = Profile.builder()
                 .user(user)
-                .identityNumber("4929814787827603")
+                .identityNumber("1234567890128")
                 .firstName("john")
                 .lastName("doe")
                 .phoneNumber(2786_345_6787L)
@@ -137,7 +137,7 @@ class ProfileServiceImplTest {
 
         //Given
         given(request.email()).willReturn("user@email.com");
-        given(request.id()).willReturn("2385764935693");
+        given(request.id()).willReturn("1234567898765");
 
         User user = User.builder()
                 .email(request.email())
@@ -157,7 +157,7 @@ class ProfileServiceImplTest {
         //GIVEN
         Profile profile = Profile.builder()
                 .id(1L)
-                .identityNumber("4929814787827603")
+                .identityNumber("1234567890128")
                 .firstName("nick")
                 .lastName("cage")
                 .phoneNumber(2786_345_6787L)
@@ -165,7 +165,7 @@ class ProfileServiceImplTest {
 
         Profile updatedProfile = Profile.builder()
                         .id(1L)
-                        .identityNumber("4929814787827603")
+                        .identityNumber("1234567890128")
                         .firstName("john")
                         .lastName("doe")
                         .phoneNumber(profile.getPhoneNumber())

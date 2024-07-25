@@ -2,7 +2,6 @@ package com.arise.pharmacy.profile;
 
 import com.arise.pharmacy.exceptions.InvalidIdentityNumberException;
 import com.arise.pharmacy.security.user.User;
-import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
 public final class ProfileBuilder {
 
@@ -58,7 +57,27 @@ public final class ProfileBuilder {
     }
 
     private boolean isValidIdentityNumber(String id){
-        return LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(id);
+        if(id.length() != 13){
+            return false;
+        }
+
+        int checkDigit = Character.getNumericValue(id.charAt(12));
+        int totalDigitsSum = 0;
+        for(int index = id.length() - 2; index >= 0; --index){
+
+            int currDigit = Character.getNumericValue(id.charAt(index));
+            if(index % 2 != 0){
+                currDigit *= 2;
+                if(currDigit > 9){
+                    currDigit -= 9;
+                }
+            }
+
+            totalDigitsSum += currDigit;
+        }
+        totalDigitsSum += checkDigit;
+
+        return totalDigitsSum % 10 == 0;
     }
 
 
