@@ -20,6 +20,10 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void register(RegistrationRequest request) {
 
+        if (request.email().isBlank() || request.password().isBlank()){
+            throw new IllegalStateException("Email and Password can't be empty");
+        }
+
         Role role = request.role().equalsIgnoreCase("staff")? STAFF : SHOPPER;
 
         User user = User.builder()

@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "api/v1/users")
@@ -17,7 +20,11 @@ public class RegistrationController {
 
     @PostMapping(path = "register")
     public ResponseEntity<?> register(@RequestBody RegistrationRequest request){
-        registrationService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try {
+            registrationService.register(request);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
+        return ResponseEntity.status(CREATED).build();
     }
 }

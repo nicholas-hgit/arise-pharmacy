@@ -22,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
                 .name(product.name())
                 .description(product.desc())
                 .price(product.price())
-                .imgURL(product.img())
+                .imgURL(product.image())
                 .build();
 
         productRepository.save(newProduct);
@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
         product.setName(newProduct.name());
         product.setDescription(newProduct.desc());
         product.setPrice(newProduct.price());
-        product.setImgURL(newProduct.img());
+        product.setImgURL(newProduct.image());
 
         productRepository.save(product);
 

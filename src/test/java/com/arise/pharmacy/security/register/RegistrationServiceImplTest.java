@@ -1,6 +1,5 @@
 package com.arise.pharmacy.security.register;
 
-import com.arise.pharmacy.security.roles.Role;
 import com.arise.pharmacy.security.user.User;
 import com.arise.pharmacy.security.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
