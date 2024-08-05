@@ -18,6 +18,10 @@ public class ProductServiceImpl implements ProductService {
     @PreAuthorize("hasAuthority('product:write')")
     public Product saveProduct(ProductRequest product) {
 
+        if (product.isNotValid()){
+            throw new IllegalStateException("Invalid product");
+        }
+
         Product newProduct = Product.builder()
                 .name(product.name())
                 .description(product.desc())
@@ -33,6 +37,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @PreAuthorize("hasAuthority('product:write')")
     public Product updateProduct(Long id, ProductRequest newProduct) throws ProductNotFoundException {
+
+        if (newProduct.isNotValid()){
+            throw new IllegalStateException("Invalid product");
+        }
 
         Optional<Product> productOptional = productRepository.findById(id);
 

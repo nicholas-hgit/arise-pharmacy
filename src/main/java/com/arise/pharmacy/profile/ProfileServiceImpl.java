@@ -43,6 +43,10 @@ public class ProfileServiceImpl implements ProfileService {
     @PreAuthorize("authentication.name.equals(#profile.email())")
     public Profile saveProfile(ProfileRequest profile) throws InvalidIdentityNumberException {
 
+        if (profile.isNotValid()){
+            throw new IllegalStateException("Invalid profile information");
+        }
+
         Optional<User> user = userRepository.findByEmail(profile.email());
 
         //noinspection OptionalGetWithoutIsPresent
@@ -63,6 +67,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @PreAuthorize("authentication.name.equals(#updatedProfile.email())")
     public Profile updateProfile(ProfileRequest updatedProfile){
+
+        if (updatedProfile.isNotValid()){
+            throw new IllegalStateException("Invalid profile information");
+        }
 
         Optional<Profile> profileOptional = profileRepository.findByEmail(updatedProfile.email());
 

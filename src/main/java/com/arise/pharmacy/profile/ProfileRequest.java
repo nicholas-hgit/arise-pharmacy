@@ -11,4 +11,13 @@ public record ProfileRequest(String email, String id , String firstName, String 
         Objects.requireNonNull(phone);
         Objects.requireNonNull(image);
     }
+
+    public boolean isNotValid(){
+        return email.isBlank()
+                && id.isBlank()
+                && firstName.isBlank()
+                && lastName.isBlank()
+                && phone.toString().length() != 9;
+
+    }
 }

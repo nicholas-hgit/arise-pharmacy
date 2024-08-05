@@ -21,7 +21,7 @@ public class ProfileController {
         Profile savedProfile;
         try {
             savedProfile = profileService.saveProfile(profile);
-        } catch (InvalidIdentityNumberException e) {
+        } catch (InvalidIdentityNumberException | IllegalStateException e) {
             return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         }
 
@@ -51,7 +51,12 @@ public class ProfileController {
     @PutMapping(path = "update")
     public ResponseEntity<?> updateProfile(@RequestBody ProfileRequest profile){
 
-        Profile updatedProfile = profileService.updateProfile(profile);
+        Profile updatedProfile;
+        try {
+            updatedProfile = profileService.updateProfile(profile);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
         return ResponseEntity.status(OK).body(updatedProfile);
     }
 }

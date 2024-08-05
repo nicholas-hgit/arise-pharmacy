@@ -20,7 +20,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void register(RegistrationRequest request) {
 
-        if (request.email().isBlank() || request.password().isBlank()){
+        if (request.isNotValid()){
             throw new IllegalStateException("Email and Password can't be empty");
         }
 

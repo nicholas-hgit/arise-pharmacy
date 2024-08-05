@@ -9,4 +9,11 @@ public record ProductRequest(String name, String desc, Double price, String imag
         Objects.requireNonNull(price);
         Objects.requireNonNull(image);
     }
+
+    public boolean isNotValid(){
+        return name.isBlank()
+                && desc.isBlank()
+                && (price().isInfinite() || price().isNaN())
+                && image.isBlank();
+    }
 }

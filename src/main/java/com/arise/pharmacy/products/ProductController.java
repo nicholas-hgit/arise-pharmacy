@@ -19,7 +19,12 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<?> saveProduct(@RequestBody ProductRequest product){
 
-        Product savedProduct = productService.saveProduct(product);
+        Product savedProduct;
+        try {
+            savedProduct = productService.saveProduct(product);
+        } catch (IllegalStateException e) {
+            return  ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
         return ResponseEntity.status(CREATED).body(savedProduct);
     }
 
@@ -29,7 +34,7 @@ public class ProductController {
         Product updatedProduct;
         try {
             updatedProduct = productService.updateProduct(id,product);
-        }catch (ProductNotFoundException e){
+        }catch (ProductNotFoundException | IllegalStateException e){
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
