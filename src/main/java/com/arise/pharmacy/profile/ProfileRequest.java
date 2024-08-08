@@ -17,7 +17,7 @@ public record ProfileRequest(String email, String id , String firstName, String 
                 && id.isBlank()
                 && firstName.isBlank()
                 && lastName.isBlank()
-                && phone.toString().length() != 9;
+                && String.valueOf(phone).length() != 9;
 
     }
 }
