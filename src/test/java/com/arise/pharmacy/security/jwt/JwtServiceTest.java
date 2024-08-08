@@ -39,7 +39,7 @@ class JwtServiceTest {
 
         assertThat(sub).isEqualTo(tokenClaims.getSubject());
         assertThat(claims.get("authority")).isEqualTo(tokenClaims.get("authority"));
-        assertThat("arise").isEqualTo(tokenClaims.getIssuer());
+        assertThat(underTest.getISSUER()).isEqualTo(tokenClaims.getIssuer());
         assertThat(java.sql.Date.valueOf(LocalDate.now().plusDays(3)))
                 .isEqualTo(tokenClaims.getExpiration());
     }
@@ -50,7 +50,7 @@ class JwtServiceTest {
         //GIVEN
         String token = Jwts.builder()
                 .subject("user@gmail.com")
-                .issuer("arise")
+                .issuer(underTest.getISSUER())
                 .issuedAt(new Date())
                 .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(3)))
                 .signWith(underTest.getSigningKey())
@@ -87,7 +87,7 @@ class JwtServiceTest {
 
         //GIVEN
         String token = Jwts.builder()
-                .issuer("arise")
+                .issuer(underTest.getISSUER())
                 .issuedAt(new Date())
                 .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(3)))
                 .signWith(underTest.getSigningKey())

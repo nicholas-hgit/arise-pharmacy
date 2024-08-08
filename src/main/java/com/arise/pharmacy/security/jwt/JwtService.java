@@ -3,6 +3,7 @@ package com.arise.pharmacy.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +19,20 @@ public class JwtService {
     @Value("${spring.jwt.secret}")
     private String SECRET_KEY;
 
+    @Getter
+    @Value("${spring.jwt.issuer}")
+    private String ISSUER;
+
     public SecretKey getSigningKey(){
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
+
 
     public String generateToken(String sub, Map<String,Object> claims){
         return Jwts.builder()
                 .subject(sub)
                 .claims(claims)
-                .issuer("arise")
+                .issuer(ISSUER)
                 .issuedAt(new Date())
                 .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(3)))
                 .signWith(getSigningKey())
@@ -56,7 +62,7 @@ public class JwtService {
     private String getIssuer(String token) { return getClaims(token).getIssuer(); }
 
     public boolean isValidToken(String token){
-        return getIssuer(token).equals("arise") && getExpiration(token).after(new Date())
+        return getIssuer(token).equals(ISSUER) && getExpiration(token).after(new Date())
                 && getSubject(token) != null;
     }
 }
