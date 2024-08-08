@@ -41,7 +41,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @PreAuthorize("authentication.name.equals(#profile.email())")
-    public Profile saveProfile(ProfileRequest profile) throws InvalidIdentityNumberException {
+    public Profile saveProfile(ProfileRequest profile) throws InvalidIdentityNumberException,IllegalStateException {
 
         if (profile.isNotValid()){
             throw new IllegalStateException("Invalid profile information");
